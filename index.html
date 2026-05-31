@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasan's 1st Birthday — Jungle Adventure</title>
+  <meta name="description" content="You're invited to Hasan's 1st birthday jungle party!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="jungle-bg" id="jungleBg" aria-hidden="true">
+    <div class="bg-layer bg-sky">
+      <div class="sun"></div>
+      <div class="sun-rays"></div>
+    </div>
+    <div class="bg-layer bg-clouds">
+      <span class="cloud cloud-1"></span>
+      <span class="cloud cloud-2"></span>
+      <span class="cloud cloud-3"></span>
+    </div>
+    <div class="bg-layer bg-mist bg-mist-1"></div>
+    <div class="bg-layer bg-mist bg-mist-2"></div>
+
+    <svg class="bg-layer bg-hills" viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#1e4d38" d="M0 280 Q180 220 360 260 T720 240 T1080 270 T1440 230 V400 H0 Z"/>
+      <path fill="#163d2c" d="M0 310 Q240 260 480 300 T960 280 T1440 320 V400 H0 Z"/>
+    </svg>
+
+    <svg class="bg-layer bg-trees-back" data-parallax="0.03" viewBox="0 0 1440 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="180" width="28" height="420" rx="6" fill="#0f2a1e"/>
+      <ellipse cx="94" cy="160" rx="70" ry="55" fill="#1a4a32"/>
+      <ellipse cx="60" cy="190" rx="45" ry="38" fill="#214f38"/>
+      <ellipse cx="130" cy="185" rx="50" ry="40" fill="#1a4a32"/>
+      <rect x="320" y="120" width="22" height="480" rx="5" fill="#0f2a1e"/>
+      <ellipse cx="331" cy="95" rx="85" ry="65" fill="#163d2c"/>
+      <ellipse cx="280" cy="130" rx="55" ry="45" fill="#1e5038"/>
+      <ellipse cx="380" cy="125" rx="60" ry="48" fill="#163d2c"/>
+      <rect x="620" y="150" width="26" height="450" rx="6" fill="#0f2a1e"/>
+      <ellipse cx="633" cy="125" rx="75" ry="58" fill="#1a4a32"/>
+      <ellipse cx="580" cy="155" rx="48" ry="40" fill="#22543a"/>
+      <rect x="900" y="100" width="24" height="500" rx="5" fill="#0f2a1e"/>
+      <ellipse cx="912" cy="70" rx="90" ry="70" fill="#163d2c"/>
+      <ellipse cx="850" cy="110" rx="58" ry="48" fill="#1e5038"/>
+      <rect x="1180" y="160" width="30" height="440" rx="7" fill="#0f2a1e"/>
+      <ellipse cx="1195" cy="135" rx="80" ry="60" fill="#1a4a32"/>
+      <ellipse cx="1140" cy="165" rx="52" ry="42" fill="#214f38"/>
+      <rect x="1350" y="200" width="20" height="400" rx="4" fill="#0f2a1e"/>
+      <ellipse cx="1360" cy="175" rx="65" ry="50" fill="#163d2c"/>
+    </svg>
+
+    <svg class="bg-layer bg-palms" data-parallax="0.05" viewBox="0 0 1440 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="palm palm-left">
+        <path d="M60 700 V280" stroke="#1a3528" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M60 280 Q20 220 10 160 Q30 200 60 240 Q50 190 60 140 Q80 200 110 240 Q90 180 60 280" fill="#2d6b45"/>
+        <path d="M60 280 Q100 210 130 150 Q105 200 80 250 Q120 190 60 280" fill="#358050"/>
+        <path d="M60 280 Q40 200 25 130 Q45 190 60 250 Q35 170 60 280" fill="#276038"/>
+      </g>
+      <g class="palm palm-right">
+        <path d="M1380 700 V260" stroke="#1a3528" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <path d="M1380 260 Q1340 190 1320 120 Q1345 170 1370 220 Q1360 160 1380 100 Q1405 170 1425 220 Q1400 160 1380 260" fill="#2d6b45"/>
+        <path d="M1380 260 Q1420 200 1450 140 Q1425 190 1395 240 Q1435 180 1380 260" fill="#358050"/>
+        <path d="M1380 260 Q1360 180 1345 110 Q1365 170 1380 230 Q1355 150 1380 260" fill="#276038"/>
+      </g>
+    </svg>
+
+    <svg class="bg-layer bg-trees-front" data-parallax="0.08" viewBox="0 0 1440 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="-10" y="120" width="120" height="380" rx="8" fill="#0a1f16"/>
+      <path d="M50 120 Q-30 80 -50 20 Q20 60 50 100 Q30 40 50 0 Q80 50 100 100 Q70 50 50 120" fill="#124428"/>
+      <path d="M50 120 Q100 70 130 10 Q90 50 70 100 Q120 40 50 120" fill="#1a5535"/>
+      <rect x="1320" y="80" width="130" height="420" rx="10" fill="#0a1f16"/>
+      <path d="M1385 80 Q1460 30 1480 -20 Q1410 30 1385 70 Q1410 10 1385 -40 Q1350 20 1320 70 Q1360 20 1385 80" fill="#124428"/>
+      <path d="M1385 80 Q1330 25 1290 -30 Q1340 30 1360 75 Q1310 15 1385 80" fill="#1a5535"/>
+      <ellipse cx="720" cy="420" rx="520" ry="90" fill="#0d281c" opacity="0.6"/>
+    </svg>
+
+    <div class="bg-layer bg-vines" id="vines"></div>
+
+    <div class="bg-layer bg-canopy">
+      <div class="canopy-strip canopy-a"></div>
+      <div class="canopy-strip canopy-b"></div>
+      <div class="canopy-strip canopy-c"></div>
+    </div>
+
+    <svg class="bg-layer bg-ferns" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 120 Q30 60 20 0 Q50 50 40 120 Z" fill="#1e5c3a" opacity="0.9"/>
+      <path d="M80 120 Q110 50 95 0 Q130 55 115 120 Z" fill="#267a48" opacity="0.85"/>
+      <path d="M160 120 Q190 70 175 10 Q210 65 195 120 Z" fill="#1e5c3a" opacity="0.9"/>
+      <path d="M1280 120 Q1310 55 1295 0 Q1330 60 1315 120 Z" fill="#267a48" opacity="0.85"/>
+      <path d="M1360 120 Q1390 65 1375 5 Q1410 70 1395 120 Z" fill="#1e5c3a" opacity="0.9"/>
+      <path d="M1420 120 Q1445 75 1435 15 Q1460 80 1440 120 Z" fill="#2d8a52" opacity="0.8"/>
+    </svg>
+
+    <div class="bg-layer bg-floor"></div>
+    <div class="bg-layer bg-light-beams"></div>
+    <div class="fireflies" id="fireflies"></div>
+    <div class="falling-leaves" id="fallingLeaves"></div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-animals" aria-hidden="true">
+      <span class="animal monkey" data-animal="monkey">🐒</span>
+      <span class="animal giraffe" data-animal="giraffe">🦒</span>
+      <span class="animal elephant" data-animal="elephant">🐘</span>
+      <span class="animal parrot" data-animal="parrot">🦜</span>
+    </div>
+
+    <div class="lion-feature">
+      <div class="lion-spotlight" aria-hidden="true"></div>
+      <div class="lion-sparkles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span class="lion-crown" aria-hidden="true">👑</span>
+      <button class="animal lion lion-favorite" data-animal="lion" type="button" aria-label="Lion — Hasan's favorite animal">
+        🦁
+      </button>
+      <span class="lion-badge">Hasan's Favorite!</span>
+    </div>
+
+    <p class="hero-tag">You're invited to a wild adventure!</p>
+    <h1 class="hero-title">
+      <span class="title-line">Hasan's</span>
+      <span class="title-number">1st</span>
+      <span class="title-line">Birthday</span>
+    </h1>
+
+    <button class="scroll-btn" id="scrollBtn" aria-label="Scroll to event details">
+      Explore the jungle
+      <span class="scroll-arrow">↓</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="card event-card" id="event">
+      <div class="card-header">
+        <span class="card-icon">🗺️</span>
+        <h2>Adventure Details</h2>
+      </div>
+      <ul class="event-list">
+        <li class="event-item">
+          <span class="event-label">When</span>
+          <span class="event-value">Saturday, 15 August 2026</span>
+        </li>
+        <li class="event-item">
+          <span class="event-label">Time</span>
+          <span class="event-value">10:30 AM – 12:30 PM</span>
+        </li>
+        <li class="event-item">
+          <span class="event-label">Where</span>
+          <span class="event-value">J Chicken Duren Sawit</span>
+          <a
+            class="maps-link"
+            href="https://share.google/TjyaFfHMNGOk5ahFm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📍 Open in Google Maps
+          </a>
+        </li>
+        <li class="event-item">
+          <span class="event-label">Dress code</span>
+          <span class="event-value">Safari &amp; jungle colors — roars encouraged!</span>
+        </li>
+      </ul>
+      <p class="event-note">🎈 Cake, games, and tiny explorer fun await!</p>
+    </section>
+
+    <section class="card fact-card" id="fact">
+      <div class="card-header">
+        <span class="card-icon">✨</span>
+        <h2>Hasan's Fun Fact</h2>
+      </div>
+      <div class="fact-reveal" id="factReveal" tabindex="0" role="button" aria-label="Tap to reveal Hasan's fun fact">
+        <div class="fact-front">
+          <span class="fact-emoji">🤫</span>
+          <p>Tap to discover something special about Hasan!</p>
+        </div>
+        <div class="fact-back">
+          <span class="fact-emoji">🦁</span>
+          <p>
+            Hasan already has his own <strong>"jungle roar"</strong> — but it sounds more like
+            a happy giggle that makes the whole room laugh along!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card love-card" id="love">
+      <div class="card-header">
+        <span class="card-icon">💚</span>
+        <h2>Send Hasan Some Love</h2>
+      </div>
+      <p class="love-text">Tap the button and shower our little explorer with hearts!</p>
+      <button class="love-btn" id="loveBtn" aria-label="Send love to Hasan">
+        <span class="love-btn-inner">
+          <span class="love-icon">❤️</span>
+          <span class="love-label">Send Love</span>
+        </span>
+      </button>
+      <p class="love-counter"><span id="loveCount">0</span> hearts sent to Hasan!</p>
+      <div class="love-message" id="loveMessage" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>See you in the jungle! 🌿</p>
+    <p class="footer-small">With love, Hasan's family</p>
+  </footer>
+
+  <div class="heart-container" id="heartContainer" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
