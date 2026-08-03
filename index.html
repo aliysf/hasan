@@ -212,6 +212,26 @@
   <div class="heart-container" id="heartContainer" aria-hidden="true"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <audio
+    id="bgMusic"
+    src="assets/jungle-backsound.mp3"
+    loop
+    preload="auto"
+    playsinline
+  ></audio>
+  <button
+    class="music-btn"
+    id="musicBtn"
+    type="button"
+    aria-label="Play jungle backsound"
+    aria-pressed="false"
+  >
+    <span class="music-btn-icon" aria-hidden="true">🎵</span>
+    <span class="music-btn-waves" aria-hidden="true">
+      <i></i><i></i><i></i>
+    </span>
+  </button>
+
   <script src="script.js"></script>
 </body>
 </html>
