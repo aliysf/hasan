@@ -78,7 +78,7 @@ function initScrollReveal() {
 
 function initScrollButton() {
   document.getElementById("scrollBtn").addEventListener("click", () => {
-    document.getElementById("invite").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("event").scrollIntoView({ behavior: "smooth" });
   });
 }
 
@@ -226,6 +226,80 @@ function initParallax() {
   });
 }
 
+function initMusic() {
+  const audio = document.getElementById("bgMusic");
+  const btn = document.getElementById("musicBtn");
+  if (!audio || !btn) return;
+
+  audio.volume = 0.45;
+  let unlocked = false;
+
+  const setPlayingUI = (playing) => {
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    btn.setAttribute(
+      "aria-label",
+      playing ? "Mute jungle backsound" : "Play jungle backsound"
+    );
+    btn.querySelector(".music-btn-icon").textContent = playing ? "🔊" : "🎵";
+  };
+
+  const play = async () => {
+    try {
+      await audio.play();
+      unlocked = true;
+      setPlayingUI(true);
+      return true;
+    } catch {
+      setPlayingUI(false);
+      return false;
+    }
+  };
+
+  const pause = () => {
+    audio.pause();
+    setPlayingUI(false);
+  };
+
+  btn.addEventListener("click", async () => {
+    if (audio.paused) {
+      const ok = await play();
+      if (ok) showToast("Jungle vibes on! 🌴🎵");
+    } else {
+      pause();
+      showToast("Music paused 🤫");
+    }
+  });
+
+  // Try autoplay; if blocked, start on first tap anywhere
+  play().then((ok) => {
+    if (ok) return;
+
+    const unlock = async () => {
+      if (unlocked) return;
+      const started = await play();
+      if (started) {
+        showToast("Welcome to the jungle! 🦁🎵");
+        window.removeEventListener("pointerdown", unlock);
+        window.removeEventListener("keydown", unlock);
+      }
+    };
+
+    window.addEventListener("pointerdown", unlock, { passive: true });
+    window.addEventListener("keydown", unlock);
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && !audio.paused) {
+      audio.dataset.wasPlaying = "1";
+      audio.pause();
+    } else if (!document.hidden && audio.dataset.wasPlaying === "1") {
+      audio.dataset.wasPlaying = "0";
+      play();
+    }
+  });
+}
+
 initFireflies();
 initFallingLeaves();
 initVines();
@@ -235,3 +309,4 @@ initFactReveal();
 initAnimals();
 initLoveButton();
 initParallax();
+initMusic();
