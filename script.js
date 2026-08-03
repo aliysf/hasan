@@ -78,7 +78,7 @@ function initScrollReveal() {
 
 function initScrollButton() {
   document.getElementById("scrollBtn").addEventListener("click", () => {
-    document.getElementById("invite").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("event").scrollIntoView({ behavior: "smooth" });
   });
 }
 
