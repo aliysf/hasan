@@ -20,9 +20,12 @@ const animalMessages = {
 // Drop matching files into assets/videos/ to fill these slots (see the README there).
 const journeyVideos = [
   {
-    // Hosted on Cloudinary; f_auto,q_auto lets it pick the best format/quality per device.
-    url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto/VID_20260813222837742.mp4",
-    poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto/VID_20260813222837742.jpg",
+    // Hosted on Cloudinary. f_auto,q_auto picks the best format/quality per device, and
+    // w_720,c_limit caps the 1080x1920 source at 720px wide — plenty for a phone player,
+    // and roughly half the download.
+    url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto,w_720,c_limit/VID_20260813222837742.mp4",
+    poster:
+      "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
     chapter: "Year One",
     emoji: "🦁",
     title: "Hasan's first year",
