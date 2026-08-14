@@ -1078,6 +1078,7 @@ main {
 }
 
 .journey-clip-media {
+  display: block;
   position: relative;
   aspect-ratio: 3 / 4;
   background: linear-gradient(145deg, #14372a, #0a2318);
@@ -1132,7 +1133,7 @@ main {
   display: grid;
   place-items: center;
   font-size: 1.1rem;
-  padding-left: 3px;
+  line-height: 1;
   box-shadow: 0 4px 14px rgba(6, 22, 14, 0.45);
   transition: transform 0.2s ease;
 }
@@ -1142,6 +1143,7 @@ main {
 }
 
 .journey-clip-body {
+  display: block;
   position: relative;
   z-index: 2;
   padding: 0.7rem 0.8rem 0.85rem;
@@ -1149,6 +1151,7 @@ main {
 }
 
 .journey-clip-title {
+  display: block;
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
@@ -1267,6 +1270,7 @@ main {
 
 .journey-clip.unavailable .journey-clip-play,
 .journey-clip.unavailable .journey-clip-duration,
+.journey-clip.unavailable .journey-clip-poster,
 .journey-clip.unavailable video {
   display: none;
 }
