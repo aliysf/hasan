@@ -20,9 +20,12 @@ const animalMessages = {
 // Drop matching files into assets/videos/ to fill these slots (see the README there).
 const journeyVideos = [
   {
-    // Cloudinary's hosted player (adaptive streaming, its own controls) shown in an iframe.
-    embed: "https://player.cloudinary.com/embed/?cloud_name=jsfhqu3t&public_id=VID_20260813222837742",
-    // Still frame used as the lightweight card thumbnail so we don't load the player just to preview.
+    // Direct MP4 played by the browser's own video element. iOS Safari won't grant autoplay or
+    // pass a tap into a cross-origin iframe, so the Cloudinary iframe player left iPhones on a
+    // dead frame — a native <video> with playsinline works everywhere. Swap `url` for `embed`
+    // (see assets/videos/README.md) to go back to Cloudinary's hosted player.
+    url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto,w_720,c_limit/VID_20260813222837742.mp4",
+    // Still frame used as the lightweight card thumbnail so we don't load the video just to preview.
     poster:
       "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
     chapter: "Year One",
@@ -377,8 +380,7 @@ function initJourney() {
 
     if (entry.isEmbed) {
       const iframe = document.createElement("iframe");
-      const separator = entry.src.includes("?") ? "&" : "?";
-      iframe.src = `${entry.src}${separator}autoplay=true`;
+      iframe.src = entry.src;
       iframe.title = `${entry.video.title} — video player`;
       iframe.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
       iframe.allowFullscreen = true;
@@ -389,7 +391,9 @@ function initJourney() {
 
     const video = document.createElement("video");
     video.controls = true;
+    // Without playsinline iOS hijacks playback into its own fullscreen player.
     video.playsInline = true;
+    video.setAttribute("webkit-playsinline", "");
     video.preload = "metadata";
     if (entry.video.poster) video.poster = entry.video.poster;
     video.src = entry.src;
@@ -397,6 +401,8 @@ function initJourney() {
       captionEl.textContent = "This clip couldn't be loaded — try again later! 🌿";
     });
     stage.appendChild(video);
+    // Called inside the tap handler so iOS treats it as user-initiated; if it's still refused the
+    // controls are already there for a manual tap.
     video.play().catch(() => {});
   }
 
