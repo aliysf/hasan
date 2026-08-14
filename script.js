@@ -20,10 +20,9 @@ const animalMessages = {
 // Drop matching files into assets/videos/ to fill these slots (see the README there).
 const journeyVideos = [
   {
-    // Hosted on Cloudinary. f_auto,q_auto picks the best format/quality per device, and
-    // w_720,c_limit caps the 1080x1920 source at 720px wide — plenty for a phone player,
-    // and roughly half the download.
-    url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto,w_720,c_limit/VID_20260813222837742.mp4",
+    // Cloudinary's hosted player (adaptive streaming, its own controls) shown in an iframe.
+    embed: "https://player.cloudinary.com/embed/?cloud_name=jsfhqu3t&public_id=VID_20260813222837742",
+    // Still frame used as the lightweight card thumbnail so we don't load the player just to preview.
     poster:
       "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
     chapter: "Year One",
@@ -275,7 +274,7 @@ function initJourney() {
   const empty = document.getElementById("journeyEmpty");
   const modal = document.getElementById("videoModal");
   const panel = modal?.querySelector(".video-modal-panel");
-  const player = document.getElementById("videoModalPlayer");
+  const stage = document.getElementById("videoModalStage");
   const closeBtn = document.getElementById("videoModalClose");
   const nav = modal?.querySelector(".video-modal-nav");
   const prevBtn = document.getElementById("videoPrevBtn");
@@ -284,15 +283,15 @@ function initJourney() {
   const titleEl = document.getElementById("videoModalTitle");
   const captionEl = document.getElementById("videoModalCaption");
   const counterEl = document.getElementById("videoModalCounter");
-  if (!rail || !modal || !player) return;
+  if (!rail || !modal || !stage) return;
 
   rail.classList.toggle("solo", journeyVideos.length === 1);
 
   const entries = journeyVideos.map((video, index) => {
-    const src = video.url || `${videoBasePath}${video.file}`;
+    const src = video.embed || video.url || `${videoBasePath}${video.file}`;
     const clip = buildJourneyClip(video, index);
     const durationEl = clip.querySelector(".journey-clip-duration");
-    const entry = { video, src, clip, playable: false, settled: false };
+    const entry = { video, src, isEmbed: Boolean(video.embed), clip, playable: false, settled: false };
 
     const settle = (playable) => {
       if (entry.settled) return;
@@ -365,11 +364,40 @@ function initJourney() {
     prevBtn.disabled = position <= 0;
     nextBtn.disabled = position === -1 || position >= playable.length - 1;
 
-    if (entry.video.poster) player.poster = entry.video.poster;
-    else player.removeAttribute("poster");
-    player.src = entry.src;
-    player.load();
-    player.play().catch(() => {});
+    mountPlayer(entry);
+  }
+
+  function clearStage() {
+    // Detaching the node stops any playing video or audio from the embed.
+    stage.innerHTML = "";
+  }
+
+  function mountPlayer(entry) {
+    clearStage();
+
+    if (entry.isEmbed) {
+      const iframe = document.createElement("iframe");
+      const separator = entry.src.includes("?") ? "&" : "?";
+      iframe.src = `${entry.src}${separator}autoplay=true`;
+      iframe.title = `${entry.video.title} — video player`;
+      iframe.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.setAttribute("frameborder", "0");
+      stage.appendChild(iframe);
+      return;
+    }
+
+    const video = document.createElement("video");
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    if (entry.video.poster) video.poster = entry.video.poster;
+    video.src = entry.src;
+    video.addEventListener("error", () => {
+      captionEl.textContent = "This clip couldn't be loaded — try again later! 🌿";
+    });
+    stage.appendChild(video);
+    video.play().catch(() => {});
   }
 
   function step(direction) {
@@ -390,18 +418,12 @@ function initJourney() {
 
   function closeClip() {
     if (modal.hidden) return;
-    player.pause();
-    player.removeAttribute("src");
-    player.load();
+    clearStage();
     modal.hidden = true;
     document.body.classList.remove("video-open");
     musicBridge.restore();
     if (lastFocused instanceof HTMLElement) lastFocused.focus();
   }
-
-  player.addEventListener("error", () => {
-    if (player.currentSrc) captionEl.textContent = "This clip couldn't be loaded — try again later! 🌿";
-  });
 
   closeBtn.addEventListener("click", closeClip);
   prevBtn.addEventListener("click", () => step(-1));
@@ -420,7 +442,7 @@ function initJourney() {
     } else if (e.key === "ArrowRight") {
       step(1);
     } else if (e.key === "Tab" && panel) {
-      const focusable = [...panel.querySelectorAll("button:not(:disabled), video")];
+      const focusable = [...panel.querySelectorAll("button:not(:disabled), video, iframe")];
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
