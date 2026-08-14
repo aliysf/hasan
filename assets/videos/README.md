@@ -3,28 +3,10 @@
 The **Hasan's Journey** section on the invitation page plays a video defined by the `journeyVideos`
 list at the top of `script.js`.
 
-## Current setup: Cloudinary hosted player (iframe)
+## Current setup: direct MP4 from Cloudinary (native player)
 
-The clip currently plays through **Cloudinary's hosted player in an iframe**, so **no video file
+The clip streams from Cloudinary and plays in the browser's own video element, so **no video file
 needs to live in this repo**:
-
-```js
-{
-  embed: "https://player.cloudinary.com/embed/?cloud_name=jsfhqu3t&public_id=VID_20260813222837742",
-  poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
-  ...
-}
-```
-
-- `embed` is the Cloudinary player URL. It brings its own controls, adaptive streaming, and
-  fullscreen/picture-in-picture. The lightbox adds `autoplay=true` when it opens the player.
-- `poster` is a still frame (`so_0` = second 0) used as a lightweight card thumbnail, so the card
-  doesn't load the player just to show a preview.
-- To use a different Cloudinary video, swap the `public_id` (`VID_20260813222837742`) in both URLs.
-
-### Alternative: a direct MP4 (native `<video>`)
-
-Prefer the built-in player instead of the iframe? Use `url` instead of `embed`:
 
 ```js
 {
@@ -36,6 +18,28 @@ Prefer the built-in player instead of the iframe? Use `url` instead of `embed`:
 
 - `f_auto,q_auto` lets Cloudinary pick the best format and quality per device.
 - `w_720,c_limit` caps the width at 720px — plenty for a phone player and about half the download.
+- `poster` is a still frame (`so_0` = second 0) used as a lightweight card thumbnail, so the card
+  doesn't download the video just to show a preview.
+- To use a different Cloudinary video, swap the `public_id` (`VID_20260813222837742`) in both URLs.
+
+### Why not the iframe player?
+
+Cloudinary's hosted player is also supported — use `embed` instead of `url`:
+
+```js
+{ embed: "https://player.cloudinary.com/embed/?cloud_name=jsfhqu3t&public_id=VID_20260813222837742", ... }
+```
+
+**It did not play on iPhone**, which is why the native player is the default. Two iOS Safari
+limitations cause it:
+
+1. A tap on our page is not a user gesture *inside* a cross-origin iframe, and iOS blocks autoplay
+   with audio — so the player can never start itself and may sit on a blank frame.
+2. iframes inside an ancestor with a CSS `transform` render blank and swallow touches on iOS. (The
+   lightbox now animates opacity only, so this specific trap is avoided.)
+
+A native `<video>` with `playsinline` avoids both, and iOS plays the MP4 directly — Cloudinary
+serves it with HTTP range support, which iOS requires.
 
 ## Alternative: a local file
 

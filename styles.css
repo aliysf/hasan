@@ -1345,12 +1345,13 @@ main {
   border: 3px solid var(--jungle-light);
   border-radius: 22px;
   box-shadow: 0 20px 60px rgba(4, 16, 10, 0.6);
-  animation: modal-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Opacity only — a transform on an iframe's ancestor makes iOS Safari render it blank. */
+  animation: modal-fade-in 0.25s ease;
 }
 
-@keyframes modal-pop {
-  from { opacity: 0; transform: scale(0.92) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .video-modal-close {
