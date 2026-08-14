@@ -214,6 +214,22 @@
       </div>
     </section>
 
+    <section class="card journey-card" id="journey">
+      <div class="card-header">
+        <span class="card-icon">🎬</span>
+        <h2>Hasan's Journey</h2>
+      </div>
+      <p class="journey-intro">
+        One whole year of tiny roars, first giggles, and wobbly steps. Tap a clip to watch our
+        little explorer grow!
+      </p>
+      <div class="journey-rail" id="journeyRail"></div>
+      <p class="journey-hint" id="journeyHint" hidden>← Swipe for more moments →</p>
+      <p class="journey-empty" id="journeyEmpty" hidden>
+        🌱 Hasan's clips are still being packed for the trip — check back soon!
+      </p>
+    </section>
+
     <section class="card love-card" id="love">
       <div class="card-header">
         <span class="card-icon">💚</span>
@@ -238,6 +254,33 @@
 
   <div class="heart-container" id="heartContainer" aria-hidden="true"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="video-modal" id="videoModal" hidden>
+    <div class="video-modal-backdrop" data-video-close></div>
+    <div
+      class="video-modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="videoModalTitle"
+    >
+      <button class="video-modal-close" id="videoModalClose" type="button" aria-label="Close video">
+        ✕
+      </button>
+      <div class="video-modal-stage">
+        <video id="videoModalPlayer" controls playsinline preload="metadata"></video>
+      </div>
+      <div class="video-modal-info">
+        <span class="video-modal-chapter" id="videoModalChapter"></span>
+        <h3 class="video-modal-title" id="videoModalTitle"></h3>
+        <p class="video-modal-caption" id="videoModalCaption"></p>
+      </div>
+      <div class="video-modal-nav">
+        <button class="video-nav-btn" id="videoPrevBtn" type="button">← Prev</button>
+        <span class="video-modal-counter" id="videoModalCounter"></span>
+        <button class="video-nav-btn" id="videoNextBtn" type="button">Next →</button>
+      </div>
+    </div>
+  </div>
 
   <audio
     id="bgMusic"

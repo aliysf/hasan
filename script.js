@@ -17,6 +17,54 @@ const animalMessages = {
   parrot: "Squawk! Parrot loves party time! 🦜",
 };
 
+// Drop matching files into assets/videos/ to fill these slots (see the README there).
+const journeyVideos = [
+  {
+    file: "hasan-newborn.mp4",
+    chapter: "Newborn",
+    emoji: "🐣",
+    title: "Welcome to the jungle",
+    caption: "Our tiniest cub arrives — all sleepy yawns, wrinkly toes, and the softest roar.",
+  },
+  {
+    file: "hasan-3-months.mp4",
+    chapter: "3 Months",
+    emoji: "😄",
+    title: "First giggles",
+    caption: "The laugh that echoes through the whole jungle and makes everyone laugh along.",
+  },
+  {
+    file: "hasan-6-months.mp4",
+    chapter: "6 Months",
+    emoji: "🍌",
+    title: "Sitting up strong",
+    caption: "Front-row seat to every adventure — plus a very messy first taste of jungle snacks.",
+  },
+  {
+    file: "hasan-9-months.mp4",
+    chapter: "9 Months",
+    emoji: "🐒",
+    title: "Crawling explorer",
+    caption: "Not one corner of the house is safe from this speedy little adventurer.",
+  },
+  {
+    file: "hasan-first-birthday.mp4",
+    chapter: "1 Year",
+    emoji: "🦁",
+    title: "Standing tall",
+    caption: "Wobbly steps, the biggest grin, and one whole year of wonder. Happy birthday, Hasan!",
+  },
+];
+
+const videoBasePath = "assets/videos/";
+
+// Set by initMusic so the backsound can step aside while a clip plays.
+const musicBridge = {
+  suppressed: false,
+  duck() {},
+  restore() {},
+};
+
 function initFireflies() {
   const container = document.getElementById("fireflies");
   for (let i = 0; i < 18; i++) {
@@ -204,6 +252,192 @@ function initLoveButton() {
   });
 }
 
+function formatDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.round(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
+
+function buildJourneyClip(video, index) {
+  const clip = document.createElement("button");
+  clip.className = "journey-clip pending";
+  clip.type = "button";
+  clip.dataset.index = String(index);
+  clip.setAttribute("aria-label", `Play ${video.chapter} — ${video.title}`);
+  clip.innerHTML = `
+    <span class="journey-clip-media">
+      <span class="journey-clip-chapter"></span>
+      <video muted playsinline preload="metadata" tabindex="-1"></video>
+      <span class="journey-clip-play" aria-hidden="true">▶</span>
+      <span class="journey-clip-duration" hidden></span>
+      <span class="journey-clip-soon">Coming soon 🌿</span>
+    </span>
+    <span class="journey-clip-body">
+      <span class="journey-clip-title">
+        <span class="journey-clip-emoji" aria-hidden="true"></span><span class="journey-clip-name"></span>
+      </span>
+    </span>`;
+
+  clip.querySelector(".journey-clip-chapter").textContent = video.chapter;
+  clip.querySelector(".journey-clip-emoji").textContent = video.emoji;
+  clip.querySelector(".journey-clip-name").textContent = video.title;
+  return clip;
+}
+
+function initJourney() {
+  const rail = document.getElementById("journeyRail");
+  const hint = document.getElementById("journeyHint");
+  const empty = document.getElementById("journeyEmpty");
+  const modal = document.getElementById("videoModal");
+  const panel = modal?.querySelector(".video-modal-panel");
+  const player = document.getElementById("videoModalPlayer");
+  const closeBtn = document.getElementById("videoModalClose");
+  const prevBtn = document.getElementById("videoPrevBtn");
+  const nextBtn = document.getElementById("videoNextBtn");
+  const chapterEl = document.getElementById("videoModalChapter");
+  const titleEl = document.getElementById("videoModalTitle");
+  const captionEl = document.getElementById("videoModalCaption");
+  const counterEl = document.getElementById("videoModalCounter");
+  if (!rail || !modal || !player) return;
+
+  const entries = journeyVideos.map((video, index) => {
+    const src = `${videoBasePath}${video.file}`;
+    const clip = buildJourneyClip(video, index);
+    const thumb = clip.querySelector("video");
+    const durationEl = clip.querySelector(".journey-clip-duration");
+    const entry = { video, src, clip, playable: false, settled: false };
+
+    const settle = (playable) => {
+      if (entry.settled) return;
+      entry.settled = true;
+      entry.playable = playable;
+      clip.classList.remove("pending");
+      clip.classList.add(playable ? "ready" : "unavailable");
+      if (!playable) {
+        clip.disabled = true;
+        clip.setAttribute("aria-label", `${video.chapter} — clip coming soon`);
+      }
+      refreshRailState();
+    };
+
+    thumb.addEventListener("loadedmetadata", () => {
+      const label = formatDuration(thumb.duration);
+      if (label) {
+        durationEl.textContent = label;
+        durationEl.hidden = false;
+      }
+      settle(true);
+    });
+    thumb.addEventListener("error", () => settle(false));
+    // A slow connection shouldn't lock the clip out; let the modal surface any real failure.
+    setTimeout(() => settle(true), 10000);
+
+    thumb.src = `${src}#t=0.1`;
+    clip.addEventListener("click", () => openClip(index));
+    rail.appendChild(clip);
+    return entry;
+  });
+
+  function refreshRailState() {
+    if (entries.some((entry) => !entry.settled)) return;
+    const playable = entries.filter((entry) => entry.playable);
+    if (empty) empty.hidden = playable.length > 0;
+    if (hint) hint.hidden = playable.length < 2;
+  }
+
+  function playableEntries() {
+    return entries.filter((entry) => entry.playable);
+  }
+
+  let currentIndex = -1;
+  let lastFocused = null;
+
+  function render(index) {
+    const entry = entries[index];
+    if (!entry) return;
+    currentIndex = index;
+
+    chapterEl.textContent = entry.video.chapter;
+    titleEl.textContent = `${entry.video.emoji} ${entry.video.title}`;
+    captionEl.textContent = entry.video.caption;
+
+    const playable = playableEntries();
+    const position = playable.indexOf(entry);
+    counterEl.textContent = playable.length ? `${position + 1} / ${playable.length}` : "";
+    prevBtn.disabled = position <= 0;
+    nextBtn.disabled = position === -1 || position >= playable.length - 1;
+
+    player.src = entry.src;
+    player.load();
+    player.play().catch(() => {});
+  }
+
+  function step(direction) {
+    const playable = playableEntries();
+    const position = playable.indexOf(entries[currentIndex]);
+    const next = playable[position + direction];
+    if (next) render(entries.indexOf(next));
+  }
+
+  function openClip(index) {
+    lastFocused = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add("video-open");
+    musicBridge.duck();
+    render(index);
+    closeBtn.focus();
+  }
+
+  function closeClip() {
+    if (modal.hidden) return;
+    player.pause();
+    player.removeAttribute("src");
+    player.load();
+    modal.hidden = true;
+    document.body.classList.remove("video-open");
+    musicBridge.restore();
+    if (lastFocused instanceof HTMLElement) lastFocused.focus();
+  }
+
+  player.addEventListener("error", () => {
+    if (player.currentSrc) captionEl.textContent = "This clip couldn't be loaded — try again later! 🌿";
+  });
+
+  closeBtn.addEventListener("click", closeClip);
+  prevBtn.addEventListener("click", () => step(-1));
+  nextBtn.addEventListener("click", () => step(1));
+  modal.querySelectorAll("[data-video-close]").forEach((el) => {
+    el.addEventListener("click", closeClip);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (modal.hidden) return;
+
+    if (e.key === "Escape") {
+      closeClip();
+    } else if (e.key === "ArrowLeft") {
+      step(-1);
+    } else if (e.key === "ArrowRight") {
+      step(1);
+    } else if (e.key === "Tab" && panel) {
+      const focusable = [...panel.querySelectorAll("button:not(:disabled), video")];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  refreshRailState();
+}
+
 function initParallax() {
   const layers = document.querySelectorAll("[data-parallax]");
   let ticking = false;
@@ -245,6 +479,7 @@ function initMusic() {
   };
 
   const play = async () => {
+    if (musicBridge.suppressed) return false;
     try {
       await audio.play();
       unlocked = true;
@@ -259,6 +494,21 @@ function initMusic() {
   const pause = () => {
     audio.pause();
     setPlayingUI(false);
+  };
+
+  let resumeAfterVideo = false;
+
+  musicBridge.duck = () => {
+    musicBridge.suppressed = true;
+    resumeAfterVideo = !audio.paused;
+    if (resumeAfterVideo) pause();
+  };
+
+  musicBridge.restore = () => {
+    musicBridge.suppressed = false;
+    if (!resumeAfterVideo) return;
+    resumeAfterVideo = false;
+    play();
   };
 
   btn.addEventListener("click", async () => {
@@ -307,6 +557,7 @@ initScrollReveal();
 initScrollButton();
 initFactReveal();
 initAnimals();
+initJourney();
 initLoveButton();
 initParallax();
 initMusic();
