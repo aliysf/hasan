@@ -1158,6 +1158,56 @@ main {
   margin-right: 0.25rem;
 }
 
+.journey-clip-caption {
+  display: none;
+}
+
+/* Single featured clip */
+.journey-rail.solo {
+  overflow: visible;
+  padding-bottom: 0.25rem;
+}
+
+.journey-rail.solo .journey-clip {
+  width: 100%;
+}
+
+.journey-rail.solo .journey-clip-media {
+  aspect-ratio: 4 / 5;
+}
+
+.journey-rail.solo .journey-clip-chapter {
+  top: 0.7rem;
+  left: 0.7rem;
+  font-size: 0.78rem;
+}
+
+.journey-rail.solo .journey-clip-play {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}
+
+.journey-rail.solo .journey-clip-body {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.journey-rail.solo .journey-clip-title {
+  font-size: 1.15rem;
+}
+
+.journey-rail.solo .journey-clip-caption {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: rgba(255, 248, 231, 0.82);
+}
+
+.journey-rail.solo .journey-clip-soon {
+  font-size: 0.95rem;
+}
+
 .journey-clip-duration {
   position: absolute;
   bottom: 0.5rem;
@@ -1333,7 +1383,7 @@ main {
 }
 
 .video-modal-info {
-  padding: 1rem 1.15rem 0.5rem;
+  padding: 1rem 1.15rem 1.15rem;
 }
 
 .video-modal-chapter {
@@ -1362,12 +1412,16 @@ main {
   color: var(--jungle-dark);
 }
 
+.video-modal-nav[hidden] {
+  display: none;
+}
+
 .video-modal-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
-  padding: 0.75rem 1.15rem 1.15rem;
+  padding: 0 1.15rem 1.15rem;
 }
 
 .video-nav-btn {

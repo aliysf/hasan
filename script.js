@@ -20,39 +20,12 @@ const animalMessages = {
 // Drop matching files into assets/videos/ to fill these slots (see the README there).
 const journeyVideos = [
   {
-    file: "hasan-newborn.mp4",
-    chapter: "Newborn",
-    emoji: "🐣",
-    title: "Welcome to the jungle",
-    caption: "Our tiniest cub arrives — all sleepy yawns, wrinkly toes, and the softest roar.",
-  },
-  {
-    file: "hasan-3-months.mp4",
-    chapter: "3 Months",
-    emoji: "😄",
-    title: "First giggles",
-    caption: "The laugh that echoes through the whole jungle and makes everyone laugh along.",
-  },
-  {
-    file: "hasan-6-months.mp4",
-    chapter: "6 Months",
-    emoji: "🍌",
-    title: "Sitting up strong",
-    caption: "Front-row seat to every adventure — plus a very messy first taste of jungle snacks.",
-  },
-  {
-    file: "hasan-9-months.mp4",
-    chapter: "9 Months",
-    emoji: "🐒",
-    title: "Crawling explorer",
-    caption: "Not one corner of the house is safe from this speedy little adventurer.",
-  },
-  {
-    file: "hasan-first-birthday.mp4",
-    chapter: "1 Year",
+    file: "hasan-bday.mp4",
+    chapter: "Year One",
     emoji: "🦁",
-    title: "Standing tall",
-    caption: "Wobbly steps, the biggest grin, and one whole year of wonder. Happy birthday, Hasan!",
+    title: "Hasan's first year",
+    caption:
+      "From sleepy newborn yawns to wobbly first steps — one whole year of our little explorer.",
   },
 ];
 
@@ -277,11 +250,13 @@ function buildJourneyClip(video, index) {
       <span class="journey-clip-title">
         <span class="journey-clip-emoji" aria-hidden="true"></span><span class="journey-clip-name"></span>
       </span>
+      <span class="journey-clip-caption"></span>
     </span>`;
 
   clip.querySelector(".journey-clip-chapter").textContent = video.chapter;
   clip.querySelector(".journey-clip-emoji").textContent = video.emoji;
   clip.querySelector(".journey-clip-name").textContent = video.title;
+  clip.querySelector(".journey-clip-caption").textContent = video.caption;
   return clip;
 }
 
@@ -293,6 +268,7 @@ function initJourney() {
   const panel = modal?.querySelector(".video-modal-panel");
   const player = document.getElementById("videoModalPlayer");
   const closeBtn = document.getElementById("videoModalClose");
+  const nav = modal?.querySelector(".video-modal-nav");
   const prevBtn = document.getElementById("videoPrevBtn");
   const nextBtn = document.getElementById("videoNextBtn");
   const chapterEl = document.getElementById("videoModalChapter");
@@ -300,6 +276,8 @@ function initJourney() {
   const captionEl = document.getElementById("videoModalCaption");
   const counterEl = document.getElementById("videoModalCounter");
   if (!rail || !modal || !player) return;
+
+  rail.classList.toggle("solo", journeyVideos.length === 1);
 
   const entries = journeyVideos.map((video, index) => {
     const src = `${videoBasePath}${video.file}`;
@@ -342,7 +320,7 @@ function initJourney() {
   function refreshRailState() {
     if (entries.some((entry) => !entry.settled)) return;
     const playable = entries.filter((entry) => entry.playable);
-    if (empty) empty.hidden = playable.length > 0;
+    if (empty) empty.hidden = playable.length > 0 || entries.length === 1;
     if (hint) hint.hidden = playable.length < 2;
   }
 
@@ -364,7 +342,8 @@ function initJourney() {
 
     const playable = playableEntries();
     const position = playable.indexOf(entry);
-    counterEl.textContent = playable.length ? `${position + 1} / ${playable.length}` : "";
+    if (nav) nav.hidden = playable.length < 2;
+    counterEl.textContent = playable.length > 1 ? `${position + 1} / ${playable.length}` : "";
     prevBtn.disabled = position <= 0;
     nextBtn.disabled = position === -1 || position >= playable.length - 1;
 
