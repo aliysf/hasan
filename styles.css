@@ -1387,6 +1387,14 @@ main {
   background: #06160e;
 }
 
+.video-modal-stage iframe {
+  display: block;
+  width: 100%;
+  height: min(70vh, 560px);
+  border: 0;
+  background: #06160e;
+}
+
 .video-modal-info {
   padding: 1rem 1.15rem 1.15rem;
 }
@@ -1641,6 +1649,7 @@ body.video-open {
   .card { padding: 1.35rem; }
   .journey-clip { width: 148px; }
   .video-modal-stage video { max-height: 56vh; }
+  .video-modal-stage iframe { height: min(64vh, 520px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

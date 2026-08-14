@@ -3,22 +3,39 @@
 The **Hasan's Journey** section on the invitation page plays a video defined by the `journeyVideos`
 list at the top of `script.js`.
 
-## Current setup: hosted on Cloudinary
+## Current setup: Cloudinary hosted player (iframe)
 
-The clip currently streams from Cloudinary, so **no video file needs to live in this repo**:
+The clip currently plays through **Cloudinary's hosted player in an iframe**, so **no video file
+needs to live in this repo**:
 
 ```js
 {
-  url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto/VID_20260813222837742.mp4",
-  poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto/VID_20260813222837742.jpg",
+  embed: "https://player.cloudinary.com/embed/?cloud_name=jsfhqu3t&public_id=VID_20260813222837742",
+  poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
+  ...
+}
+```
+
+- `embed` is the Cloudinary player URL. It brings its own controls, adaptive streaming, and
+  fullscreen/picture-in-picture. The lightbox adds `autoplay=true` when it opens the player.
+- `poster` is a still frame (`so_0` = second 0) used as a lightweight card thumbnail, so the card
+  doesn't load the player just to show a preview.
+- To use a different Cloudinary video, swap the `public_id` (`VID_20260813222837742`) in both URLs.
+
+### Alternative: a direct MP4 (native `<video>`)
+
+Prefer the built-in player instead of the iframe? Use `url` instead of `embed`:
+
+```js
+{
+  url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto,w_720,c_limit/VID_20260813222837742.mp4",
+  poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto,w_720,c_limit/VID_20260813222837742.jpg",
   ...
 }
 ```
 
 - `f_auto,q_auto` lets Cloudinary pick the best format and quality per device.
-- `poster` is a still frame (`so_0` = second 0) used as a lightweight thumbnail, so the card
-  doesn't download the whole video just to show a preview.
-- To use a different Cloudinary video, swap the `public_id` (`VID_20260813222837742`) in both URLs.
+- `w_720,c_limit` caps the width at 720px — plenty for a phone player and about half the download.
 
 ## Alternative: a local file
 
