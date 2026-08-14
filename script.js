@@ -20,7 +20,9 @@ const animalMessages = {
 // Drop matching files into assets/videos/ to fill these slots (see the README there).
 const journeyVideos = [
   {
-    file: "hasan-bday.mp4",
+    // Hosted on Cloudinary; f_auto,q_auto lets it pick the best format/quality per device.
+    url: "https://res.cloudinary.com/jsfhqu3t/video/upload/f_auto,q_auto/VID_20260813222837742.mp4",
+    poster: "https://res.cloudinary.com/jsfhqu3t/video/upload/so_0,f_auto,q_auto/VID_20260813222837742.jpg",
     chapter: "Year One",
     emoji: "🦁",
     title: "Hasan's first year",
@@ -238,10 +240,14 @@ function buildJourneyClip(video, index) {
   clip.type = "button";
   clip.dataset.index = String(index);
   clip.setAttribute("aria-label", `Play ${video.chapter} — ${video.title}`);
+  const preview = video.poster
+    ? `<img class="journey-clip-poster" alt="" loading="lazy" />`
+    : `<video muted playsinline preload="metadata" tabindex="-1"></video>`;
+
   clip.innerHTML = `
     <span class="journey-clip-media">
       <span class="journey-clip-chapter"></span>
-      <video muted playsinline preload="metadata" tabindex="-1"></video>
+      ${preview}
       <span class="journey-clip-play" aria-hidden="true">▶</span>
       <span class="journey-clip-duration" hidden></span>
       <span class="journey-clip-soon">Coming soon 🌿</span>
@@ -280,9 +286,8 @@ function initJourney() {
   rail.classList.toggle("solo", journeyVideos.length === 1);
 
   const entries = journeyVideos.map((video, index) => {
-    const src = `${videoBasePath}${video.file}`;
+    const src = video.url || `${videoBasePath}${video.file}`;
     const clip = buildJourneyClip(video, index);
-    const thumb = clip.querySelector("video");
     const durationEl = clip.querySelector(".journey-clip-duration");
     const entry = { video, src, clip, playable: false, settled: false };
 
@@ -299,19 +304,29 @@ function initJourney() {
       refreshRailState();
     };
 
-    thumb.addEventListener("loadedmetadata", () => {
-      const label = formatDuration(thumb.duration);
-      if (label) {
-        durationEl.textContent = label;
-        durationEl.hidden = false;
-      }
-      settle(true);
-    });
-    thumb.addEventListener("error", () => settle(false));
-    // A slow connection shouldn't lock the clip out; let the modal surface any real failure.
-    setTimeout(() => settle(true), 10000);
+    if (video.poster) {
+      // Lightweight image preview — don't download the whole video just for a thumbnail.
+      const posterImg = clip.querySelector(".journey-clip-poster");
+      posterImg.addEventListener("load", () => settle(true));
+      posterImg.addEventListener("error", () => settle(false));
+      posterImg.src = video.poster;
+      setTimeout(() => settle(true), 10000);
+    } else {
+      const thumb = clip.querySelector("video");
+      thumb.addEventListener("loadedmetadata", () => {
+        const label = formatDuration(thumb.duration);
+        if (label) {
+          durationEl.textContent = label;
+          durationEl.hidden = false;
+        }
+        settle(true);
+      });
+      thumb.addEventListener("error", () => settle(false));
+      // A slow connection shouldn't lock the clip out; let the modal surface any real failure.
+      setTimeout(() => settle(true), 10000);
+      thumb.src = `${src}#t=0.1`;
+    }
 
-    thumb.src = `${src}#t=0.1`;
     clip.addEventListener("click", () => openClip(index));
     rail.appendChild(clip);
     return entry;
@@ -347,6 +362,8 @@ function initJourney() {
     prevBtn.disabled = position <= 0;
     nextBtn.disabled = position === -1 || position >= playable.length - 1;
 
+    if (entry.video.poster) player.poster = entry.video.poster;
+    else player.removeAttribute("poster");
     player.src = entry.src;
     player.load();
     player.play().catch(() => {});
